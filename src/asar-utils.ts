@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { minimatch } from 'minimatch';
 import os from 'os';
-import { d } from './debug';
+import { d } from './debug.js';
 
 const LIPO = 'lipo';
 

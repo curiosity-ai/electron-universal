@@ -1,5 +1,5 @@
 import { spawn, ExitCodeError } from '@malept/cross-spawn-promise';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import * as path from 'path';
 
 const MACHO_PREFIX = 'Mach-O ';
