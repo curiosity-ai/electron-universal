@@ -1,7 +1,7 @@
 import { spawn } from '@malept/cross-spawn-promise';
 import * as asar from '@electron/asar';
 import * as crypto from 'crypto';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import minimatch from 'minimatch';
 import * as os from 'os';
 import * as path from 'path';
@@ -193,6 +193,61 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
         }
       } catch (e) {
         throw new Error('failed to compare machOFile ' + machOFile.relativePath);
+      }
+    }
+
+    for (const x64File of x64Files.filter(
+      (f) => f.type === AppFileType.PLAIN || f.type === AppFileType.MACHO,
+    )) {
+      try {
+        if (
+          (await fs.pathExists(path.resolve(opts.x64AppPath, x64File.relativePath))) &&
+          !(await fs.pathExists(path.resolve(opts.arm64AppPath, x64File.relativePath)))
+        ) {
+          const first = await fs.realpath(path.resolve(opts.x64AppPath, x64File.relativePath));
+
+          await spawn('mkdir', ['-p', path.resolve(tmpApp, path.dirname(x64File.relativePath))]);
+          await spawn('cp', [first, path.resolve(tmpApp, x64File.relativePath)]);
+
+          if (x64File.type == AppFileType.MACHO) {
+            await spawn('lipo', [
+              first,
+              '-create',
+              '-output',
+              await fs.realpath(path.resolve(tmpApp, x64File.relativePath)),
+            ]);
+          }
+        }
+      } catch (e) {
+        throw new Error('failed to copy files from x64 ' + x64File.relativePath);
+      }
+    }
+
+    for (const arm64File of arm64Files.filter(
+      (f) => f.type === AppFileType.PLAIN || f.type === AppFileType.MACHO,
+    )) {
+      try {
+        if (
+          !(await fs.pathExists(path.resolve(opts.x64AppPath, arm64File.relativePath))) &&
+          (await fs.pathExists(path.resolve(opts.arm64AppPath, arm64File.relativePath)))
+        ) {
+          const second = await fs.realpath(path.resolve(opts.arm64AppPath, arm64File.relativePath));
+
+          await spawn('mkdir', ['-p', path.resolve(tmpApp, path.dirname(arm64File.relativePath))]);
+          await spawn('cp', [second, path.resolve(tmpApp, arm64File.relativePath)]);
+
+          if (arm64File.type == AppFileType.MACHO) {
+            await spawn('lipo', [
+              // first,
+              second,
+              '-create',
+              '-output',
+              await fs.realpath(path.resolve(tmpApp, arm64File.relativePath)),
+            ]);
+          }
+        }
+      } catch (e) {
+        throw new Error('failed to copy files from arm64 ' + arm64File.relativePath);
       }
     }
 
