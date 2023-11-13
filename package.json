@@ -2,7 +2,7 @@
   "name": "@electron/universal",
   "version": "0.0.0-development",
   "description": "Utility for creating Universal macOS applications from two x64 and arm64 Electron applications",
-  "main": "run.js",
+  "main": "dist/cjs/run.js",
   "module": "dist/esm/index.js",
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,6 @@
     "!entry-asar/**/*.ts",
     "README.md"
   ],
-  "type": "module",
   "author": "Samuel Attard",
   "scripts": {
     "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.entry-asar.json",
@@ -31,11 +30,11 @@
     "prettier:write": "prettier --write \"{src,entry-asar,test}/**/*.ts\" \"*.ts\"",
     "prepublishOnly": "npm run build",
     "test": "jest",
-    "build-universal": "node run.js",
+    "run": "node .",
     "prepare": "husky install"
   },
   "bin": {
-    "run": "run.js"
+    "build-universal": "dist/run.js"
   },
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^4.0.0",
