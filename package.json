@@ -17,13 +17,13 @@
   "engines": {
     "node": ">=16.4"
   },
-  "type": "module",
   "files": [
     "dist/*",
     "entry-asar/*",
     "!entry-asar/**/*.ts",
     "README.md"
   ],
+  "type": "module",
   "author": "Samuel Attard",
   "scripts": {
     "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json && tsc -p tsconfig.entry-asar.json",
@@ -31,10 +31,11 @@
     "prettier:write": "prettier --write \"{src,entry-asar,test}/**/*.ts\" \"*.ts\"",
     "prepublishOnly": "npm run build",
     "test": "jest",
+    "build-universal": "node run.js",
     "prepare": "husky install"
   },
   "bin": {
-    "hello": "run.js"
+    "run": "run.js"
   },
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^4.0.0",
