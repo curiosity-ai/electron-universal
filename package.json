@@ -2,7 +2,7 @@
   "name": "@electron/universal",
   "version": "0.0.0-development",
   "description": "Utility for creating Universal macOS applications from two x64 and arm64 Electron applications",
-  "main": "dist/cjs/run.js",
+  "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "license": "MIT",
   "keywords": [
@@ -30,11 +30,11 @@
     "prettier:write": "prettier --write \"{src,entry-asar,test}/**/*.ts\" \"*.ts\"",
     "prepublishOnly": "npm run build",
     "test": "jest",
-    "run": "node .",
+    "make-universal": "node dist/cjs/run.js",
     "prepare": "husky install"
   },
   "bin": {
-    "build-universal": "dist/run.js"
+    "build-universal": "dist/cjs/run.js"
   },
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^4.0.0",

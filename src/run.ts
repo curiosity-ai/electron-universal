@@ -3,6 +3,8 @@ import { parseArgs } from 'node:util';
 
 const {
   values: { x64AppPath, arm64AppPath, outAppPath, force },
+  positionals,
+  tokens,
 } = parseArgs({
   options: {
     x64AppPath: {
@@ -22,16 +24,24 @@ const {
       short: 'f',
     },
   },
+  allowPositionals: true,
+  tokens: true,
 });
 
-// console.log(`${x64AppPath}  ${arm64AppPath} ${outAppPath} ${force}`);
+const argsDebug = {
+  args: {
+    values: { x64AppPath, arm64AppPath, outAppPath, force },
+    positionals,
+    tokens,
+  },
+};
 
 if (!x64AppPath) {
-  throw new Error('x64AppPath undefined');
+  throw new Error('x64AppPath undefined. Args:' + argsDebug);
 } else if (!arm64AppPath) {
-  throw new Error('arm64AppPath undefined');
+  throw new Error('arm64AppPath undefined. Args:' + argsDebug);
 } else if (!outAppPath) {
-  throw new Error('outAppPath undefined');
+  throw new Error('outAppPath undefined. Args:' + argsDebug);
 } else {
   (async () => {
     console.log('starting to make universal app now');
