@@ -8,6 +8,12 @@
 
 ## Usage
 
+### Command Line
+```shell
+npm run build && npm run make-universal -- --x64AppPath "/path/to/app.app" --arm64AppPath "/path/to/app.app" --outAppPath "/path/to/universal.app" --force
+```
+
+### JS build pipeline
 ```typescript
 import { makeUniversalApp } from '@electron/universal';
 
