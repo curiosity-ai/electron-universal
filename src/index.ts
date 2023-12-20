@@ -138,6 +138,8 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
     const x64Files = await getAllAppFiles(await fs.realpath(tmpApp));
     const arm64Files = await getAllAppFiles(await fs.realpath(opts.arm64AppPath));
 
+    const knownMergedMachOFiles = new Set();
+
     for (const machOFile of x64Files.filter((f) => f.type === AppFileType.MACHO)) {
       try {
         if (
@@ -183,6 +185,7 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
       } catch (e) {
         throw new Error('failed to compare machOFile ' + machOFile.relativePath);
       }
+      knownMergedMachOFiles.add(machOFile.relativePath);
     }
 
     for (const x64File of x64Files.filter(
@@ -253,8 +256,18 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
         path.resolve(opts.arm64AppPath, 'Contents', 'Resources', 'app'),
         { compareSize: true, compareContent: true },
       );
+      const differences = comparison.diffSet!.filter((difference) => difference.state !== 'equal');
+      d(`Found ${differences.length} difference(s) between the x64 and arm64 folders`);
+      const nonMergedDifferences = differences.filter(
+        (difference) =>
+          !difference.name1 ||
+          !knownMergedMachOFiles.has(
+            path.join('Contents', 'Resources', 'app', difference.relativePath, difference.name1),
+          ),
+      );
+      d(`After discluding MachO files merged with lipo ${nonMergedDifferences.length} remain.`);
 
-      if (!comparison.same) {
+      if (nonMergedDifferences.length > 0) {
         d('x64 and arm64 app folders are different, creating dynamic entry ASAR');
         await fs.move(
           path.resolve(tmpApp, 'Contents', 'Resources', 'app'),
