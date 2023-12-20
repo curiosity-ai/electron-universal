@@ -138,33 +138,6 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
     const x64Files = await getAllAppFiles(await fs.realpath(tmpApp));
     const arm64Files = await getAllAppFiles(await fs.realpath(opts.arm64AppPath));
 
-    // for (const file of dupedFiles(x64Files)) {
-    //   if (
-    //     file.type === AppFileType.MACHO &&
-    //     !arm64Files.some((f) => f.relativePath === file.relativePath)
-    //   )
-    //     uniqueToX64.push(file.relativePath);
-    // }
-    // for (const file of dupedFiles(arm64Files)) {
-    //   if (
-    //     file.type === AppFileType.MACHO &&
-    //     !x64Files.some((f) => f.relativePath === file.relativePath)
-    //   )
-    //     uniqueToArm64.push(file.relativePath);
-    // }
-    // if (uniqueToX64.length !== uniqueToArm64.length) {
-    //   d('some files were not in both builds, aborting');
-    //   console.error({
-    //     uniqueToX64Len: uniqueToX64.length,
-    //     uniqueToArm64Len: uniqueToArm64.length,
-    //     uniqueToX64: uniqueToX64.filter((f) => !uniqueToArm64.includes(f)),
-    //     uniqueToArm64: uniqueToArm64.filter((f) => !uniqueToX64.includes(f)),
-    //   });
-    //   throw new Error(
-    //     'While trying to merge mach-o files across your apps we found a mismatch, the number of mach-o files is not the same between the arm64 and x64 builds',
-    //   );
-    // }
-
     for (const machOFile of x64Files.filter((f) => f.type === AppFileType.MACHO)) {
       try {
         if (
