@@ -1,6 +1,5 @@
 import { spawn } from '@malept/cross-spawn-promise';
 import * as asar from '@electron/asar';
-import * as crypto from 'crypto';
 import fs from 'fs-extra';
 import { minimatch } from 'minimatch';
 import * as os from 'os';
@@ -133,8 +132,6 @@ export const makeUniversalApp = async (opts: MakeUniversalOpts): Promise<void> =
     const tmpApp = path.resolve(tmpDir, 'Tmp.app');
     await spawn('cp', ['-R', opts.x64AppPath, tmpApp]);
 
-    // const uniqueToX64: string[] = [];
-    // const uniqueToArm64: string[] = [];
     const x64Files = await getAllAppFiles(await fs.realpath(tmpApp));
     const arm64Files = await getAllAppFiles(await fs.realpath(opts.arm64AppPath));
 
